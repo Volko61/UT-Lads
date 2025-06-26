@@ -77,6 +77,6 @@ completion = client.chat.completions.create(
 
 
 
-mail = json.loads(completion.choices[0].message.content)
-
-print(mail)
+result = completion.choices[0].message.content
+json_result = json.loads(result)
+print(json_result["mail"])
