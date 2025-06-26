@@ -8,6 +8,7 @@ from groq import Groq
 import json
 import numpy as np
 import keyboard
+import pyperclip
 
 load_dotenv()
 
@@ -80,3 +81,4 @@ completion = client.chat.completions.create(
 result = completion.choices[0].message.content
 json_result = json.loads(result)
 print(json_result["mail"])
+pyperclip.copy(json_result["mail"])
