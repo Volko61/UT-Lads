@@ -13,7 +13,7 @@ load_dotenv()
 freq = 44100
 
 # Recording duration
-duration = 5
+duration = 2
 
 # Start recorder with the given values of 
 # duration and sample frequency
@@ -64,8 +64,8 @@ completion = client.chat.completions.create(
 
 
 
-
-
-mail = json.loads(completion.choices[0].message)
+result = completion.choices[0].message.content
+print(result)
+mail = json.loads(result)
 
 print(mail)
