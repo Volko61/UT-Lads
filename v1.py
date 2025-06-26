@@ -2,7 +2,7 @@ import ollama
 import os
 # import required libraries
 import sounddevice as sd
-from scipy.io.wavfile import write
+# from scipy.io.wavfile import write
 import wavio as wv
 from groq import Groq
 import json

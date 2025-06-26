@@ -3,4 +3,5 @@ groq
 
 sounddevice
 wavio
+.env
 
