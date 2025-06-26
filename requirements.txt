@@ -1,6 +1,6 @@
 ollama
 groq
-
+python-dotenv
 sounddevice
 wavio
 .env

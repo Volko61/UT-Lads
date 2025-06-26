@@ -1,12 +1,13 @@
 import ollama
 import os
+from dotenv import load_dotenv
 # import required libraries
 import sounddevice as sd
 # from scipy.io.wavfile import write
 import wavio as wv
 from groq import Groq
 import json
-
+load_dotenv()
 
 # Sampling frequency
 freq = 44100
