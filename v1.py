@@ -12,34 +12,46 @@ import pyperclip
 
 load_dotenv()
 
-# Paramètres audio
-freq = 44100
-channels = 1
-chunk_duration = 0.1  # Durée des chunks (seconds)
-chunk_size = int(freq * chunk_duration)
 
-print("Press and hold the spacebar to start recording...")
+def detect_audio(keys_to_press):
+  # Paramètres audio
+  freq = 44100
+  channels = 1
+  chunk_duration = 0.1  # Durée des chunks (seconds)
+  chunk_size = int(freq * chunk_duration)
 
-all_chunks = []
+  print("Press and hold the spacebar to start recording...")
 
-keyboard.wait('space')
+  all_chunks = []
 
-# Start stream
-stream = sd.InputStream(samplerate=freq, channels=channels)
-stream.start()
+  # while True:
+  #   if(keyboard.is_pressed(''))
 
-# Continue recording while space is held
-while keyboard.is_pressed('space'):
-  audio_chunk, _ = stream.read(chunk_size)
-  all_chunks.append(audio_chunk)
+  # keyboard.wait('space')
 
-stream.stop()
-print("* Done recording")
+  # Start stream
+  stream = sd.InputStream(samplerate=freq, channels=channels)
+  stream.start()
 
-# Concatenation des extraits audio avec numpy
-recording = np.concatenate(all_chunks, axis=0)
+  # Continue recording while space is held
+  condition = True
+  while condition:
+    for keys in keys_to_press:
+      if not keyboard.is_pressed(keys):
+        condition = False
+    audio_chunk, _ = stream.read(chunk_size)
+    all_chunks.append(audio_chunk)
 
-wv.write("recording1.wav", recording, freq, sampwidth=2)
+  stream.stop()
+  print("* Done recording")
+
+  # Concatenation des extraits audio avec numpy
+  recording = np.concatenate(all_chunks, axis=0)
+
+  wv.write("recording1.wav", recording, freq, sampwidth=2)
+
+#Utilisation d'une hotkey pour faire la détection de l'audio
+keyboard.add_hotkey('ctrl+space', detect_audio, args=([['ctrl', 'space']]))
 
 client = Groq()
 
@@ -82,3 +94,9 @@ result = completion.choices[0].message.content
 json_result = json.loads(result)
 print(json_result["mail"])
 pyperclip.copy(json_result["mail"])
+
+#Appuyez sur x pour arrêter le programme
+while True:
+  if keyboard.is_pressed("x"):
+    break
+
