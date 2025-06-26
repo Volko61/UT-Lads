@@ -1,0 +1,6 @@
+ollama
+groq
+
+sounddevice
+wavio
+
