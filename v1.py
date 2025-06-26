@@ -1,31 +1,43 @@
 import ollama
 import os
 from dotenv import load_dotenv
-# import required libraries
 import sounddevice as sd
 # from scipy.io.wavfile import write
 import wavio as wv
 from groq import Groq
 import json
+import numpy as np
+import keyboard
+
 load_dotenv()
 
-# Sampling frequency
+# Paramètres audio
 freq = 44100
+channels = 1
+chunk_duration = 0.1  # Durée des chunks (seconds)
+chunk_size = int(freq * chunk_duration)
 
-# Recording duration
-duration = 5
+print("Press and hold the spacebar to start recording...")
 
-# Start recorder with the given values of 
-# duration and sample frequency
-recording = sd.rec(int(duration * freq), 
-                   samplerate=freq, channels=2)
+all_chunks = []
 
+keyboard.wait('space')
 
+# Start stream
+stream = sd.InputStream(samplerate=freq, channels=channels)
+stream.start()
 
-# Record audio for the given number of seconds
-sd.wait()
+# Continue recording while space is held
+while keyboard.is_pressed('space'):
+  audio_chunk, _ = stream.read(chunk_size)
+  all_chunks.append(audio_chunk)
 
-# Convert the NumPy array to audio file
+stream.stop()
+print("* Done recording")
+
+# Concatenation des extraits audio avec numpy
+recording = np.concatenate(all_chunks, axis=0)
+
 wv.write("recording1.wav", recording, freq, sampwidth=2)
 
 client = Groq()
@@ -35,7 +47,7 @@ filename = os.path.dirname(__file__) + "/recording1.wav"
 with open(filename, "rb") as file:
     transcription = client.audio.transcriptions.create(
       file=(filename, file.read()),
-      model="whisper-large-v3",
+      model="whisper-large-v3-turbo",
             language="en",
       response_format="verbose_json",
     )
@@ -65,7 +77,6 @@ completion = client.chat.completions.create(
 
 
 
-
-mail = json.loads(completion.choices[0].message)
+mail = json.loads(completion.choices[0].message.content)
 
 print(mail)
